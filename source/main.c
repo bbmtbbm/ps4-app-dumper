@@ -246,7 +246,7 @@ void dump_app(char *title_id, char *usb_path) {
 int _main(struct thread *td) {
   UNUSED(td);
 
-  char title_id[10] = {0};
+  char title_id[10] = "CUSA33388";
   char usb_name[7] = {0};
   char usb_path[13] = {0};
   char cfg_path[PATH_MAX] = {0};
@@ -281,14 +281,6 @@ int _main(struct thread *td) {
 
   snprintf_s(cfg_path, sizeof(cfg_path), "%s/dumper.cfg", usb_path);
   cfg_parse(cfg_path, config_handler, &config);
-
-  if (!wait_for_app(title_id)) {
-    snprintf_s(notify_buf, sizeof(notify_buf), "Waiting for application to launch...");
-    do {
-      sceKernelSleep(1);
-    } while (!wait_for_app(title_id));
-    notify_buf[0] = '\0';
-  }
 
   if (wait_for_bdcopy(title_id) < 100) {
     int progress;
