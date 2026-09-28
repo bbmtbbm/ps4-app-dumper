@@ -1,0 +1,35 @@
+name: Build PS4 App Dumper
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout dumper
+        uses: actions/checkout@v4
+
+      - name: Install requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential binutils gcc make
+
+      - name: Get PS4 Payload SDK
+        run: |
+          git clone --recursive https://github.com/Scene-Collective/ps4-payload-sdk.git /tmp/ps4-payload-sdk
+          cd /tmp/ps4-payload-sdk
+          sudo ./install.sh
+
+      - name: Build dumper
+        run: |
+          export PS4SDK=/lib/ps4-payload-sdk
+          make
+
+      - name: Upload PS4 payload
+        uses: actions/upload-artifact@v4
+        with:
+          name: ps4-app-dumper
+          path: "*.bin"
+          if-no-files-found: error
